@@ -1,3 +1,5 @@
+{-| A portable is either an export or an import.
+-}
 module Format.Parser.Portable where
 
 import Flow
@@ -14,8 +16,6 @@ import qualified Data.Maybe as Maybe
 
 
 {-| `Portable` type.
-
-{!} A portable is either an export or an import.
 
 1st argument = The name of the portable
 2nd argument = A list of data constructors
