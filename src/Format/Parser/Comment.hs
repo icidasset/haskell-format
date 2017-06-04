@@ -25,7 +25,7 @@ data Comment
 -- 📮
 
 
-{-| A comment, block or non-block, ignores surround whitespace.
+{-| A comment, block or non-block, ignores surrounding whitespace.
 
 >>> parseTest comment "\n\n-- Hi!\n\n\n"
 Comment "Hi!"
