@@ -1,0 +1,41 @@
+name: haskell-format
+version: 0.1.0
+synopsis: Format Haskell source code
+description: See README at <https://github.com/icidasset/haskell-format#readme>
+maintainer: Steven Vandevelde <icid.asset@gmail.com>
+license: MIT
+github: icidasset/haskell-format
+category: Development
+
+
+ghc-options: -Wall
+
+
+dependencies:
+  - base >= 4.7 && < 5
+  - flow
+  - megaparsec
+
+
+library:
+  source-dirs: src
+  exposed-modules:
+    Format
+
+
+executables:
+  haskell-format:
+    main: Main.hs
+    source-dirs: bin
+    dependencies:
+      - haskell-format
+
+tests:
+  spec:
+    main: Tests.hs
+    source-dirs:
+      - tests
+      - src
+    dependencies:
+      - doctest
+      - Glob
