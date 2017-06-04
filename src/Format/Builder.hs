@@ -18,3 +18,10 @@ Rebuild the whole document from scratch.
 -}
 
 module Format.Builder where
+
+import Format.Parser (Document(..))
+
+
+run :: Document -> String
+run document =
+    show document
