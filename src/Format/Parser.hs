@@ -1,13 +1,3 @@
-module Format.Parser
-    ( Comment(..)
-    , Document(..)
-    , Import(..)
-    , Module(..)
-    , Portable(..)
-
-    , document
-    ) where
-
 {-
 
 THE PARSER
@@ -31,6 +21,16 @@ Document
 A `Document` represents a single Haskell file.
 
 -}
+
+module Format.Parser
+    ( Comment(..)
+    , Document(..)
+    , Import(..)
+    , Module(..)
+    , Portable(..)
+
+    , document
+    ) where
 
 import Format.Parser.Comment
 import Format.Parser.Module

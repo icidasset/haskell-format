@@ -1,5 +1,3 @@
-module Format.Builder where
-
 {-
 
 THE BUILDER
@@ -18,3 +16,5 @@ The idea
 Rebuild the whole document from scratch.
 
 -}
+
+module Format.Builder where

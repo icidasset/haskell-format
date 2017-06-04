@@ -28,7 +28,7 @@ data Comment
 {-| A comment, one of the options below this function.
 
 >>> parseTest comment "\n\n-- Hi!\n\n\n"
-Comment "Hi!"
+Comment " Hi!"
 
 -}
 comment :: Parser Comment
@@ -41,7 +41,7 @@ comment =
 ⚠️ Ignores surrounding whitespace
 
 >>> parseTest singleLineComment "    -- Girl I didn't know you could go down like that"
-Comment "Girl I didn't know you could go down like that"
+Comment " Girl I didn't know you could go down like that"
 
 >>> parseTest singleLineComment "--\n"
 Comment ""
@@ -51,7 +51,6 @@ singleLineComment :: Parser Comment
 singleLineComment = do
     _           <- whitespace
     _           <- string "--"                          -- <start>
-    _           <- spaceCharacters                      -- Remove leading spaces
     theComment  <- manyTill anyChar singleLineEnding    -- ... </end>
     _           <- whitespace
 
@@ -80,17 +79,12 @@ CommentBlock "xyz"
 >>> parseTest multiLineComment ['{', '-', 'x', '\n', 'z', '-', '}']
 CommentBlock "x\nz"
 
->>> parseTest multiLineComment ['{', '-', '|', ' ', ' ', '-', '}']
-CommentBlock ""
-
 -}
 multiLineComment :: Parser Comment
 multiLineComment = do
     _           <- whitespace
-    _           <- string "{-"                          -- `{-`
-    _           <- optional (char '|')                  -- Remove `|`
-    _           <- whitespace                           -- Remove leading whitespace
-    theComment  <- manyTill anyChar multiLineEnding     -- ... `-}`
+    _           <- string "{-"                          -- <start>
+    theComment  <- manyTill anyChar multiLineEnding     -- ... </end>
     _           <- whitespace
 
     return $ CommentBlock theComment
@@ -98,4 +92,4 @@ multiLineComment = do
 
 multiLineEnding :: Parser String
 multiLineEnding =
-    spaceCharacters `andThen` string "-}"               -- Remove trailing spaces
+    string "-}"
