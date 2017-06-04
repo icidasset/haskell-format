@@ -10,6 +10,19 @@ module Format.Parser
 
 {-
 
+THE PARSER
+==========
+
+Parsing the Haskell files.
+
+Wait what?
+----------
+
+Haskell file -> `Document` constructor.
+
+Structure
+---------
+
 Document
     Module
     Imports
