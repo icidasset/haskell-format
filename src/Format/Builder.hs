@@ -15,7 +15,6 @@ Wait what?
 The idea
 --------
 
-+ Rebuild the whole document from scratch
-+ We have all the information, so rebuilding is easier than shifting things around
+Rebuild the whole document from scratch.
 
 -}
