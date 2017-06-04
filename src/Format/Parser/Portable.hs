@@ -2,13 +2,11 @@
 -}
 module Format.Parser.Portable where
 
-import Flow
 import Format.Parser.Utilities
 import Prelude hiding (or)
 import Text.Megaparsec
 import Text.Megaparsec.String
 
-import qualified Data.Functor.Identity as Functor (Identity)
 import qualified Data.Maybe as Maybe
 
 
@@ -44,16 +42,16 @@ data Portable =
 portables :: Parser [Portable]
 portables = do
     _               <- char '('
-    _               <- skipMany spaceChar
-    thePortables    <- sepEndBy portable portablesSeparator
+    _               <- whitespace
+    thePortables    <- sepEndBy portable portableSeparator
     _               <- char ')'
 
     return thePortables
 
 
-portablesSeparator :: ParsecT Dec String Functor.Identity ()
-portablesSeparator =
-    maybeSome spaceChar `andThen` optional (char ',') `andThen` space
+portableSeparator :: Parser ()
+portableSeparator =
+    whitespace `andThen` optional (char ',') `andThen` whitespace
 
 
 {-| A portable.
@@ -74,12 +72,12 @@ Portable "function" []
 portable :: Parser Portable
 portable = do
     name            <- some alphaNumChar
-    constructors    <- optional (dataConstructors)
+    constructors    <- optional dataConstructors
 
-    constructors
-        |> Maybe.fromMaybe []
-        |> Portable name
-        |> return
+    return $
+        Portable
+            name
+            (Maybe.fromMaybe [] constructors)
 
 
 {-| A list of data constructors.
@@ -91,10 +89,15 @@ portable = do
 dataConstructors :: Parser [String]
 dataConstructors = do
     _               <- char '('
-    constructors    <- sepBy dataConstructor (char ',' `andThen` space)
+    constructors    <- sepBy dataConstructor dataConstructorSeparator
     _               <- char ')'
 
     return constructors
+
+
+dataConstructorSeparator :: Parser ()
+dataConstructorSeparator =
+    char ',' `andThen` spaceCharacters
 
 
 {-| A data constructor.

@@ -25,7 +25,6 @@ import Format.Parser.Import
 import Format.Parser.Portable
 import Format.Parser.Utilities
 import Prelude hiding (or)
-import Text.Megaparsec
 import Text.Megaparsec.String
 
 

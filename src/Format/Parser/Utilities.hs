@@ -1,10 +1,13 @@
 module Format.Parser.Utilities where
 
 import Control.Applicative (Alternative, (<|>))
+import Text.Megaparsec
+import Text.Megaparsec.String
+
 import qualified Control.Applicative
 
 
--- ⚗️ Utilities
+-- ⚗️ Combinators & stuff
 
 
 and :: Monad m => m a -> (a -> m b) -> m b
@@ -30,3 +33,17 @@ one =
 maybeSome :: Alternative f => f a -> f [a]
 maybeSome =
     Control.Applicative.many
+
+
+
+-- Predefined combinations
+
+
+whitespace :: Parser ()
+whitespace =
+    skipMany spaceChar
+
+
+spaceCharacters :: Parser ()
+spaceCharacters =
+    skipMany (char ' ')

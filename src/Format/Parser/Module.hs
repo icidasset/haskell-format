@@ -38,21 +38,20 @@ Module "Example" Nothing [Portable "Type" [".."]]
 Module "Example" Nothing [Portable "a" [],Portable "b" []]
 
 >>> parseTest docModule (['{', '-'] ++ "| Hi! " ++ ['-', '}'] ++ "\n module Example where")
-Module "Example" (Just (CommentBlock "| Hi! ")) []
+Module "Example" (Just (CommentBlock "Hi!")) []
 
 -}
 docModule :: Parser Module
 docModule = do
     moduleDocs      <- optional multiLineComment
-    _               <- maybeSome spaceChar
     _               <- string "module"
-    _               <- space
+    _               <- whitespace
     moduleName      <- some letterChar
-    _               <- space
+    _               <- whitespace
     exports         <- optional portables
-    _               <- space
+    _               <- whitespace
     _               <- string "where"
-    _               <- maybeSome spaceChar
+    _               <- whitespace
 
     return $
         Module

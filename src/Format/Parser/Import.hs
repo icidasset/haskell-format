@@ -43,13 +43,13 @@ Import "B" True [Portable "C" ["D"]]
 docImport :: Parser Import
 docImport = do
     _               <- string "import"
-    _               <- space
+    _               <- whitespace
     isQualified     <- optional (string "qualified")
-    _               <- space
+    _               <- whitespace
     importName      <- some letterChar
-    _               <- space
+    _               <- whitespace
     dependencies    <- optional portables
-    _               <- maybeSome spaceChar
+    _               <- whitespace
 
     return $
         Import
