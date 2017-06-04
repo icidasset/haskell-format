@@ -1,7 +1,7 @@
 module Format.Parser.Comment where
 
 import Format.Parser.Utilities
-import Prelude hiding (and, or)
+import Prelude hiding (or)
 import Text.Megaparsec
 import Text.Megaparsec.String
 
@@ -89,7 +89,7 @@ multiLineComment = do
     _           <- whitespace
     _           <- string "{-"                          -- `{-`
     _           <- optional (char '|')                  -- Remove `|`
-    _           <- whitespace                           -- Remove leading spaces
+    _           <- whitespace                           -- Remove leading whitespace
     theComment  <- manyTill anyChar multiLineEnding     -- ... `-}`
     _           <- whitespace
 

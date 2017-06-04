@@ -36,7 +36,7 @@ maybeSome =
 
 
 
--- Predefined combinations
+-- 🤖 Predefined combinations
 
 
 whitespace :: Parser ()
