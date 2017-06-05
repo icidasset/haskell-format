@@ -1,4 +1,4 @@
-module Example where
+module Example (x, y, z) where
 
 import Stuff
 
