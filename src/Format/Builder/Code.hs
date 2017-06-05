@@ -12,6 +12,8 @@ import qualified Data.List as List (map, intercalate)
 -- 📮
 
 
+{-| Build a list of `Code`s.
+-}
 buildList :: [Code] -> String
 buildList pieces =
     pieces

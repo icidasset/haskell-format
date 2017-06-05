@@ -10,6 +10,13 @@ import qualified Format.Builder.Portable as Portable
 -- 📮
 
 
+{-| Build an `Import`.
+
+```
+import qualified Name (Portable)
+```
+
+-}
 build :: Import -> String
 build (Import name isQualified portables) = concat
     [ -- Declaration

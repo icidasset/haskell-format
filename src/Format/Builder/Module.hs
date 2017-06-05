@@ -12,7 +12,7 @@ import qualified Format.Builder.Portable as Portable
 -- 📮
 
 
-{-| Build the `module` bit of a Haskell file.
+{-| Build a `Module`.
 
 ```
 module Example
