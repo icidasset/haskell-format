@@ -1,7 +1,7 @@
 module Format.Builder.Portable where
 
 import Data.Monoid ((<>))
-import Format.Parser.Portable (Portable(..))
+import Format.Parser
 
 import qualified Data.List as List (intercalate)
 

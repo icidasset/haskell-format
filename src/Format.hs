@@ -4,7 +4,7 @@ module Format
 
 import Flow
 import Format.Parser (Document(..))
-import Text.Megaparsec (parse, parseErrorPretty)
+import Text.Megaparsec as Mega (parse, parseErrorPretty)
 
 import qualified Format.Builder as Builder
 import qualified Format.Parser as Parser
@@ -18,8 +18,9 @@ format :: String -> IO ()
 format relativePath =
     relativePath
         |> readFile
-        |> fmap (runParser relativePath)
-        |> anew (putStr)
+        |> fmap (parse Parser.document relativePath)
+        |> fmap (either Mega.parseErrorPretty handleDocument)
+        |> anew putStr
 
 
 
@@ -28,14 +29,7 @@ format relativePath =
 
 anew :: Monad m => (a -> m b) -> m a -> m b
 anew =
-    flip (>>=)
-
-
-runParser :: String -> String -> String
-runParser relativePath content =
-    content
-        |> parse Parser.document relativePath
-        |> either parseErrorPretty handleDocument
+    (=<<)
 
 
 handleDocument :: Document -> String

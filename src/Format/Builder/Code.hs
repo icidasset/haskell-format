@@ -2,9 +2,7 @@ module Format.Builder.Code where
 
 import Data.Monoid ((<>))
 import Flow
-
-import Format.Parser.Comment (Comment(..))
-import Format.Parser.Code (Code(..))
+import Format.Parser
 
 import qualified Data.List as List (map, intercalate)
 

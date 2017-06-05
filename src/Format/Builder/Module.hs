@@ -2,10 +2,9 @@ module Format.Builder.Module where
 
 import Data.Monoid ((<>))
 import Flow
-import Format.Parser.Comment (Comment(..))
-import Format.Parser.Module (Module(..))
+import Format.Parser
 
-import qualified Data.List as List
+import qualified Data.List as List (intercalate, map)
 import qualified Format.Builder.Portable as Portable
 
 

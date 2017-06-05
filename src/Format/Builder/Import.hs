@@ -1,7 +1,7 @@
 module Format.Builder.Import where
 
 import Flow
-import Format.Parser.Import (Import(..))
+import Format.Parser
 
 import qualified Data.List as List (intercalate, map)
 import qualified Format.Builder.Portable as Portable
@@ -23,9 +23,7 @@ build (Import name isQualified portables) = concat
       "import "
 
       -- Qualified?
-    , case isQualified of
-        True    -> "qualified "
-        False   -> ""
+    , if isQualified then "qualified " else ""
 
       -- Name
     , name
