@@ -23,7 +23,8 @@ A `Document` represents a single Haskell file.
 -}
 
 module Format.Parser
-    ( Comment(..)
+    ( Code(..)
+    , Comment(..)
     , Document(..)
     , Import(..)
     , Module(..)
@@ -32,18 +33,20 @@ module Format.Parser
     , document
     ) where
 
+import Format.Parser.Code
 import Format.Parser.Comment
 import Format.Parser.Module
 import Format.Parser.Import
 import Format.Parser.Portable
 import Format.Parser.Utilities
+import Text.Megaparsec (eof)
 import Text.Megaparsec.String
 
 
 -- 🌳
 
 
-data Document = Document Module [Import] deriving (Show)
+data Document = Document Module [Import] [Code] deriving (Show)
 
 
 
@@ -55,5 +58,7 @@ document = do
     theModule           <- one docModule
     _                   <- maybeSome comment
     theImports          <- maybeSome docImport
+    piecesOfCode        <- maybeSome code
+    _                   <- eof
 
-    return $ Document theModule theImports
+    return $ Document theModule theImports piecesOfCode
