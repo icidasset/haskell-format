@@ -1,10 +1,13 @@
 module Format.Parser.Utilities where
 
 import Control.Applicative (Alternative, (<|>))
+import Flow
 import Text.Megaparsec
 import Text.Megaparsec.String
 
 import qualified Control.Applicative
+import qualified Data.List as List
+import qualified Data.List.Split as List (splitOn)
 
 
 -- ⚗️ Combinators & stuff
@@ -39,11 +42,23 @@ maybeSome =
 -- 🤖 Predefined combinations
 
 
-whitespace :: Parser ()
+whitespace :: Parser String
 whitespace =
-    skipMany spaceChar
+    maybeSome spaceChar
 
 
-spaceCharacters :: Parser ()
+spaceCharacters :: Parser String
 spaceCharacters =
-    skipMany (char ' ')
+    maybeSome (char ' ')
+
+
+
+-- 📿 Strings
+
+
+leadingSpace :: String -> Int
+leadingSpace str =
+    str
+    |> List.splitOn "\n"
+    |> List.last
+    |> List.length

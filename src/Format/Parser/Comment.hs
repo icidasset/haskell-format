@@ -1,5 +1,6 @@
 module Format.Parser.Comment where
 
+import Flow
 import Format.Parser.Utilities
 import Prelude hiding (or)
 import Text.Megaparsec
@@ -16,8 +17,8 @@ or a multi-line (block) comment.
 
 -}
 data Comment
-    = Comment String
-    | CommentBlock String
+    = Comment Int String
+    | CommentBlock Int String
     deriving (Show)
 
 
@@ -28,7 +29,7 @@ data Comment
 {-| A comment, one of the options below this function.
 
 >>> parseTest comment "\n\n-- Hi!\n\n\n"
-Comment " Hi!"
+Comment 0 "Hi!"
 
 -}
 comment :: Parser Comment
@@ -38,23 +39,25 @@ comment =
 
 {-| A single-line comment, starts `with --`.
 
-⚠️ Ignores surrounding whitespace
+⚠️ Ignores leading new-lines and trailing in some cases.
 
 >>> parseTest singleLineComment "    -- Girl I didn't know you could go down like that"
-Comment " Girl I didn't know you could go down like that"
+Comment 4 "Girl I didn't know you could go down like that"
 
->>> parseTest singleLineComment "--\n"
-Comment ""
+>>> parseTest singleLineComment "-- \n"
+Comment 0 ""
 
 -}
 singleLineComment :: Parser Comment
 singleLineComment = do
-    _           <- whitespace
-    _           <- string "--"                          -- <start>
-    theComment  <- manyTill anyChar singleLineEnding    -- ... </end>
-    _           <- whitespace
+    spaceBefore     <- whitespace
+    _               <- string "-- "                          -- <start>
+    theComment      <- manyTill anyChar singleLineEnding    -- ... </end>
 
-    return $ Comment theComment
+    -- Result
+    theComment
+        |> Comment (leadingSpace spaceBefore)
+        |> makeParser
 
 
 singleLineEnding :: Parser String
@@ -68,28 +71,49 @@ singleLineEnding =
 
 {-| A multi-line comment, like this one.
 
-⚠️ Ignores surrounding whitespace
+⚠️ Ignores leading new-lines and trailing in some cases.
 
 >>> parseTest multiLineComment ['{', '-', '-', '}']
-CommentBlock ""
+CommentBlock 0 ""
 
 >>> parseTest multiLineComment ['{', '-', 'x', 'y', 'z', '-', '}']
-CommentBlock "xyz"
+CommentBlock 0 "xyz"
 
 >>> parseTest multiLineComment ['{', '-', 'x', '\n', 'z', '-', '}']
-CommentBlock "x\nz"
+CommentBlock 0 "x\nz"
 
 -}
 multiLineComment :: Parser Comment
 multiLineComment = do
-    _           <- whitespace
-    _           <- string "{-"                          -- <start>
-    theComment  <- manyTill anyChar multiLineEnding     -- ... </end>
-    _           <- whitespace
+    spaceBefore     <- whitespace
+    _               <- string "{-"                          -- <start>
+    theComment      <- manyTill anyChar multiLineEnding     -- ... </end>
 
-    return $ CommentBlock theComment
+    -- Result
+    theComment
+        |> CommentBlock (leadingSpace spaceBefore)
+        |> makeParser
 
 
 multiLineEnding :: Parser String
 multiLineEnding =
     string "-}"
+
+
+
+-- ⚗️
+
+
+makeParser :: Comment -> Parser Comment
+makeParser c =
+    let
+        indentation =
+            case c of
+                Comment ind _ -> ind
+                CommentBlock ind _ -> ind
+    in
+        -- Remove trailing whitespace
+        -- {!} if the leading-space count is zero
+        -- >>> and then return
+        if indentation == 0 then whitespace >> return c
+        else return c

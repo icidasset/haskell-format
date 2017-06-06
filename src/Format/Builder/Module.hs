@@ -25,7 +25,7 @@ build :: Module -> String
 build (Module name documentation portables) = concat
     [ -- Documentation
       case documentation of
-        Just (CommentBlock comment) ->
+        Just (CommentBlock _ comment) ->
             "{-" <> comment <> "-}\n"
         _ ->
             ""

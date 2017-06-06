@@ -38,7 +38,7 @@ Module "Example" Nothing [Portable "Type" [".."]]
 Module "Example" Nothing [Portable "a" [],Portable "b" []]
 
 >>> parseTest docModule (['{', '-', '-', '}'] ++ "\n module Example where")
-Module "Example" (Just (CommentBlock "")) []
+Module "Example" (Just (CommentBlock 0 "")) []
 
 -}
 docModule :: Parser Module

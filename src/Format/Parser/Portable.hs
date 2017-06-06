@@ -49,7 +49,7 @@ portables = do
     return thePortables
 
 
-portableSeparator :: Parser ()
+portableSeparator :: Parser String
 portableSeparator =
     whitespace `andThen` optional (char ',') `andThen` whitespace
 
@@ -95,7 +95,7 @@ dataConstructors = do
     return constructors
 
 
-dataConstructorSeparator :: Parser ()
+dataConstructorSeparator :: Parser String
 dataConstructorSeparator =
     char ',' `andThen` spaceCharacters
 

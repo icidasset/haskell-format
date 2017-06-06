@@ -12,6 +12,7 @@ main = return (hello "Dude")
 
 
 -- Functions
+-- (ie. do things with data)
 
 
 {-| Hello!
@@ -21,4 +22,5 @@ Explanation goes here.
 -}
 hello :: String -> String
 hello name =
+    -- Test
     "Hello " ++ name ++ "!"
