@@ -1,5 +1,6 @@
 module Format.Builder.Import where
 
+import Data.Monoid ((<>))
 import Flow
 import Format.Parser
 
@@ -18,15 +19,16 @@ import qualified Name (Portable)
 
 -}
 build :: Import -> String
-build (Import name isQualified portables) = concat
+build (Import name options portables) = concat
     [ -- Declaration
       "import "
 
       -- Qualified?
-    , if isQualified then "qualified " else ""
+    , if qualified options then "qualified " else ""
 
-      -- Name
+      -- Name & Options
     , name
+    , keywords options
 
       -- Portables
     , case portables of
@@ -42,3 +44,13 @@ build (Import name isQualified portables) = concat
                 , ")"
                 ]
     ]
+
+
+
+-- Keywords
+
+
+keywords :: ImportOptions -> String
+keywords (ImportOptions (Just anAlias) _ _) = " as " <> anAlias
+keywords (ImportOptions _ True _) = " hiding "
+keywords _ = ""

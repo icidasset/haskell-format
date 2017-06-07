@@ -1,37 +1,42 @@
 module Format
-    ( format
+    ( Result(..)
+    , format
     ) where
 
 import Flow
 import Format.Parser (Document(..))
-import Text.Megaparsec as Mega (parse, parseErrorPretty)
+import Text.Megaparsec (ParseError, ShowErrorComponent, ShowToken, parse)
 
 import qualified Format.Builder as Builder
 import qualified Format.Parser as Parser
 import qualified Format.Processor as Processor
+import qualified Text.Megaparsec as Mega (parseErrorPretty)
+
+
+data Result
+    = Ok String
+    | Err String
 
 
 -- 🍯
 
 
-format :: String -> IO ()
-format relativePath =
-    relativePath
-        |> readFile
-        |> fmap (parse Parser.document relativePath)
-        |> fmap (either Mega.parseErrorPretty handleDocument)
-        |> anew putStr
+format :: String -> String -> Result
+format contents filePath =
+    contents
+        |> parse Parser.document filePath
+        |> either failure success
 
 
 
 -- ⚗️
 
 
-anew :: Monad m => (a -> m b) -> m a -> m b
-anew =
-    (=<<)
+failure :: (Ord t, ShowToken t, ShowErrorComponent e) => ParseError t e -> Result
+failure =
+    Mega.parseErrorPretty .> Err
 
 
-handleDocument :: Document -> String
-handleDocument =
-    Processor.run >> Builder.run
+success :: Document -> Result
+success =
+    Processor.run .> Builder.run .> Ok

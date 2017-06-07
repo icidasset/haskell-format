@@ -56,9 +56,16 @@ spaceCharacters =
 -- 📿 Strings
 
 
+leadingNewlines :: String -> Int
+leadingNewlines str =
+    str
+        |> List.filter (== '\n')
+        |> List.length
+
+
 leadingSpace :: String -> Int
 leadingSpace str =
     str
-    |> List.splitOn "\n"
-    |> List.last
-    |> List.length
+        |> List.splitOn "\n"
+        |> List.last
+        |> List.length

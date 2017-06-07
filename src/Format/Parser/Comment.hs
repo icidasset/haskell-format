@@ -15,10 +15,14 @@ import Text.Megaparsec.String
 Which is either an single-line comment
 or a multi-line (block) comment.
 
+1st argument = The leading new-lines
+2nd argument = The leading spaces on the line where the comment starts
+3rd argument = The comment itself
+
 -}
 data Comment
-    = Comment Int String
-    | CommentBlock Int String
+    = Comment Int Int String
+    | CommentBlock Int Int String
     deriving (Show)
 
 
@@ -29,7 +33,7 @@ data Comment
 {-| A comment, one of the options below this function.
 
 >>> parseTest comment "\n\n-- Hi!\n\n\n"
-Comment 0 "Hi!"
+Comment 2 0 "Hi!"
 
 -}
 comment :: Parser Comment
@@ -39,13 +43,11 @@ comment =
 
 {-| A single-line comment, starts `with --`.
 
-⚠️ Ignores leading new-lines and trailing in some cases.
-
 >>> parseTest singleLineComment "    -- Girl I didn't know you could go down like that"
-Comment 4 "Girl I didn't know you could go down like that"
+Comment 0 4 "Girl I didn't know you could go down like that"
 
 >>> parseTest singleLineComment "-- \n"
-Comment 0 ""
+Comment 0 0 ""
 
 -}
 singleLineComment :: Parser Comment
@@ -56,7 +58,7 @@ singleLineComment = do
 
     -- Result
     theComment
-        |> Comment (leadingSpace spaceBefore)
+        |> Comment (leadingNewlines spaceBefore) (leadingSpace spaceBefore)
         |> makeParser
 
 
@@ -71,16 +73,14 @@ singleLineEnding =
 
 {-| A multi-line comment, like this one.
 
-⚠️ Ignores leading new-lines and trailing in some cases.
-
 >>> parseTest multiLineComment ['{', '-', '-', '}']
-CommentBlock 0 ""
+CommentBlock 0 0 ""
 
 >>> parseTest multiLineComment ['{', '-', 'x', 'y', 'z', '-', '}']
-CommentBlock 0 "xyz"
+CommentBlock 0 0 "xyz"
 
 >>> parseTest multiLineComment ['{', '-', 'x', '\n', 'z', '-', '}']
-CommentBlock 0 "x\nz"
+CommentBlock 0 0 "x\nz"
 
 -}
 multiLineComment :: Parser Comment
@@ -91,7 +91,7 @@ multiLineComment = do
 
     -- Result
     theComment
-        |> CommentBlock (leadingSpace spaceBefore)
+        |> CommentBlock (leadingNewlines spaceBefore) (leadingSpace spaceBefore)
         |> makeParser
 
 
@@ -109,8 +109,8 @@ makeParser c =
     let
         indentation =
             case c of
-                Comment ind _ -> ind
-                CommentBlock ind _ -> ind
+                Comment _ ind _ -> ind
+                CommentBlock _ ind _ -> ind
     in
         -- Remove trailing whitespace
         -- {!} if the leading-space count is zero

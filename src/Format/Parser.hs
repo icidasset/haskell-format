@@ -27,6 +27,7 @@ module Format.Parser
     , Comment(..)
     , Document(..)
     , Import(..)
+    , ImportOptions(..)
     , Module(..)
     , Portable(..)
 

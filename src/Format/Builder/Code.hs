@@ -43,11 +43,20 @@ reduce (previousPiece, result) piece =
       -- Code
       --
     , case piece of
-        Note (Comment indentation comment) ->
-            List.replicate indentation ' ' <> "-- " <> comment
+        Note (Comment _ 0 comment) ->
+            "-- " <> comment
 
-        Note (CommentBlock indentation comment) ->
-            List.replicate indentation ' ' <> "{-" <> comment <> "-}"
+        Note (Comment newlines indentation comment) ->
+            ""
+            <> List.replicate newlines '\n'
+            <> List.replicate indentation ' '
+            <> "-- " <> comment
+
+        Note (CommentBlock newlines indentation comment) ->
+            ""
+            <> List.replicate newlines '\n'
+            <> List.replicate indentation ' '
+            <> "{-" <> comment <> "-}"
 
         UnchartedLine line ->
             line
@@ -72,11 +81,11 @@ prefix :: Code -> Code -> String
 {- Insert whitespace before a top-level `--` comment.
    If it is the last one that is.
 -}
-prefix (UnchartedLine _) (Note (Comment 0 _)) = "\n\n\n"
+prefix (UnchartedLine _) (Note (Comment _ 0 _)) = "\n\n\n"
 
 {- Insert whitespace after a top-level `--` comment -}
-prefix (Note (Comment 0 _)) (Note (Comment _ _)) = ""
-prefix (Note (Comment 0 _)) _ = "\n\n"
+prefix (Note (Comment _ 0 _)) (Note Comment{}) = ""
+prefix (Note (Comment _ 0 _)) _ = "\n\n"
 
 {- No prefix otherwise -}
 prefix _ _ = ""

@@ -101,6 +101,13 @@ dataConstructorSeparator =
 
 
 {-| A data constructor.
+
+>>> parseTest dataConstructor "Format"
+"Format"
+
+>>> parseTest dataConstructor ".."
+".."
+
 -}
 dataConstructor :: Parser String
 dataConstructor =
