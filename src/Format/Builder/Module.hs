@@ -31,7 +31,7 @@ build (Module name documentation portables) = concat
             ""
 
       -- Declaration
-    , "module " <> name <> " "
+    , "module " <> name
 
       -- Portables
     , case portables of
