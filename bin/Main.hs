@@ -10,7 +10,7 @@ main = do
     args <- getArgs
 
     -- Fun w/ flags
-    let filePath = head args
+    let filePath = head (excludeFlags args)
     let override = elem "--replace" args || elem "-r" args
 
     -- Get file contents
@@ -26,3 +26,16 @@ main = do
 
         Err err ->
             putStr err >> exitFailure
+
+
+
+-- More fun with flags
+
+
+excludeFlags :: [String] -> [String]
+excludeFlags = filter excludeFlag
+
+
+excludeFlag :: String -> Bool
+excludeFlag ('-' : _) = False
+excludeFlag _ = True
