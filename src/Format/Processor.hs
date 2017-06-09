@@ -15,11 +15,34 @@ Stuff like reordering the imports, etc.
 
 module Format.Processor where
 
-import Format.Parser (Document(..))
+import Flow
+import Format.Parser
+
+import qualified Format.Processor.Import
+import qualified Format.Processor.Module
 
 
 -- 📮
 
 
 run :: Document -> Document
-run = id
+run doc =
+    doc
+        |> mapModule Format.Processor.Module.process
+        |> mapImports Format.Processor.Import.process
+
+
+
+-- ⚗️
+
+
+mapModule :: (Module -> Module) -> Document -> Document
+mapModule mapFn (Document m i c) = Document (mapFn m) i c
+
+
+mapImports :: ([Import] -> [Import]) -> Document -> Document
+mapImports mapFn (Document m i c) = Document m (mapFn i) c
+
+
+mapCode :: ([Code] -> [Code]) -> Document -> Document
+mapCode mapFn (Document m i c) = Document m i (mapFn c)

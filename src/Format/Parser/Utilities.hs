@@ -2,6 +2,7 @@ module Format.Parser.Utilities where
 
 import Control.Applicative (Alternative, (<|>))
 import Flow
+import Prelude hiding (or)
 import Text.Megaparsec
 import Text.Megaparsec.String
 
@@ -13,9 +14,9 @@ import qualified Data.List.Split as List (splitOn)
 -- ⚗️ Combinators & stuff
 
 
-and :: Monad m => m a -> (a -> m b) -> m b
+and :: (Applicative f, Monoid a) => f a -> f a -> f a
 and =
-    (>>=)
+    Control.Applicative.liftA2 mappend
 
 
 andThen :: Monad m => m a -> m b -> m b
@@ -42,14 +43,19 @@ maybeSome =
 -- 🤖 Predefined combinations
 
 
-whitespace :: Parser String
+moduleName :: Parser String
+moduleName =
+    some (alphaNumChar `or` char '.')
+
+
+whitespace :: Parser Char
 whitespace =
-    maybeSome spaceChar
+    spaceChar
 
 
-spaceCharacters :: Parser String
-spaceCharacters =
-    maybeSome (char ' ')
+spaceCharacter :: Parser Char
+spaceCharacter =
+    char ' '
 
 
 
@@ -69,3 +75,8 @@ leadingSpace str =
         |> List.splitOn "\n"
         |> List.last
         |> List.length
+
+
+trim :: String -> String
+trim =
+    words .> unwords

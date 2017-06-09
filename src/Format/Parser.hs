@@ -30,7 +30,6 @@ module Format.Parser
     , ImportOptions(..)
     , Module(..)
     , Portable(..)
-
     , document
     ) where
 

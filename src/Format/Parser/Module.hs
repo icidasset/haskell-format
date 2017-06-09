@@ -43,18 +43,18 @@ Module "Example" (Just (CommentBlock 0 0 "")) []
 -}
 docModule :: Parser Module
 docModule = do
-    moduleDocs      <- optional multiLineComment
-    _               <- string "module"
-    _               <- whitespace
-    moduleName      <- some letterChar
-    _               <- whitespace
+    docs            <- optional multiLineComment
+    _               <- one (string "module")
+    _               <- some whitespace
+    name            <- one moduleName
+    _               <- some whitespace
     exports         <- optional portables
-    _               <- whitespace
-    _               <- string "where"
-    _               <- whitespace
+    _               <- maybeSome whitespace
+    _               <- one (string "where")
+    _               <- maybeSome whitespace
 
     return $
         Module
-            moduleName
-            moduleDocs
+            name
+            docs
             (Maybe.fromMaybe [] exports)

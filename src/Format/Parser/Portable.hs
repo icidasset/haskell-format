@@ -3,7 +3,7 @@
 module Format.Parser.Portable where
 
 import Format.Parser.Utilities
-import Prelude hiding (or)
+import Prelude hiding (and, or)
 import Text.Megaparsec
 import Text.Megaparsec.String
 
@@ -42,7 +42,7 @@ data Portable =
 portables :: Parser [Portable]
 portables = do
     _               <- char '('
-    _               <- whitespace
+    _               <- maybeSome whitespace
     thePortables    <- sepEndBy portable portableSeparator
     _               <- char ')'
 
@@ -51,7 +51,7 @@ portables = do
 
 portableSeparator :: Parser String
 portableSeparator =
-    whitespace `andThen` optional (char ',') `andThen` whitespace
+    maybeSome whitespace `andThen` optional (char ',') `andThen` maybeSome whitespace
 
 
 {-| A portable.
@@ -68,16 +68,38 @@ Portable "Type" ["A","B"]
 >>> parseTest portable "function"
 Portable "function" []
 
+>>> parseTest portable "module Abc"
+Portable "module Abc" []
+
+>>> parseTest portable "(!~>)"
+Portable "(!~>)" []
+
 -}
 portable :: Parser Portable
 portable = do
-    name            <- some alphaNumChar
+    name            <- one portableName
     constructors    <- optional dataConstructors
 
     return $
         Portable
             name
             (Maybe.fromMaybe [] constructors)
+
+
+portableName :: Parser String
+portableName = choice
+    [ string "module" `and` some spaceCharacter `and` one moduleName
+    , one infixPortableName
+    , one moduleName
+    ]
+
+
+infixPortableName :: Parser String
+infixPortableName = do
+    opening         <- string "("
+    exceptTheEnd    <- someTill (noneOf ")") (char ')')
+
+    return $ concat [opening, exceptTheEnd, ")"]
 
 
 {-| A list of data constructors.
@@ -97,7 +119,7 @@ dataConstructors = do
 
 dataConstructorSeparator :: Parser String
 dataConstructorSeparator =
-    char ',' `andThen` spaceCharacters
+    char ',' `andThen` maybeSome spaceCharacter
 
 
 {-| A data constructor.

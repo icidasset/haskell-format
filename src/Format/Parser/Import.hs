@@ -68,16 +68,16 @@ Import "A" (ImportOptions {alias = Just "B", hiding = False, qualified = False})
 -}
 docImport :: Parser Import
 docImport = do
-    _               <- string "import"
-    _               <- whitespace
+    _               <- one (string "import")
+    _               <- some whitespace
     isQualified     <- optional (string "qualified")
-    _               <- whitespace
-    importName      <- some (letterChar `or` char '.')
-    _               <- whitespace
+    _               <- maybeSome whitespace
+    importName      <- one moduleName
+    _               <- maybeSome whitespace
     theOptions      <- options
-    _               <- whitespace
+    _               <- maybeSome whitespace
     dependencies    <- optional portables
-    _               <- whitespace
+    _               <- maybeSome whitespace
 
     return $
         Import
@@ -102,15 +102,15 @@ options =
 
 keyAlias :: Parser ImportOptions
 keyAlias = do
-    _               <- string "as "
-    theAlias        <- some (letterChar `or` char '.')
+    _               <- one (string "as ")
+    theAlias        <- one moduleName
 
     return defaultOptions { alias = Just theAlias }
 
 
 keyHiding :: Parser ImportOptions
 keyHiding = do
-    _               <- string "hiding"
+    _               <- one (string "hiding")
 
     return defaultOptions { hiding = True }
 

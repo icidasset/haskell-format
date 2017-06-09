@@ -4,11 +4,41 @@ import Data.Monoid ((<>))
 import Flow
 import Format.Parser
 
-import qualified Data.List as List (intercalate, map)
+import qualified Data.List as List (filter, intercalate, map)
 import qualified Format.Builder.Portable as Portable
 
 
 -- 📮
+
+
+{-| Build an `Import` list
+-}
+buildList :: [Import] -> String
+buildList list =
+    let
+        listNonQualified =
+            List.filter (isQualified .> (==) False) list
+
+        listQualified =
+            List.filter (isQualified .> (==) True) list
+    in
+        concat
+            [ -- Non-qualified
+              listNonQualified
+                |> List.map build
+                |> List.intercalate "\n"
+
+              --
+            , if length list > 2 && not (null listQualified) then
+                "\n\n"
+              else
+                ""
+
+              -- Qualified
+            , listQualified
+                |> List.map build
+                |> List.intercalate "\n"
+            ]
 
 
 {-| Build an `Import`.
@@ -44,6 +74,12 @@ build (Import name options portables) = concat
                 , ")"
                 ]
     ]
+
+
+{-| Is-qualified helper.
+-}
+isQualified :: Import -> Bool
+isQualified (Import _ options _) = qualified options
 
 
 

@@ -52,8 +52,8 @@ Comment 0 0 ""
 -}
 singleLineComment :: Parser Comment
 singleLineComment = do
-    spaceBefore     <- whitespace
-    _               <- string "-- "                          -- <start>
+    spaceBefore     <- maybeSome whitespace
+    _               <- one (string "-- ")                   -- <start>
     theComment      <- manyTill anyChar singleLineEnding    -- ... </end>
 
     -- Result
@@ -85,8 +85,8 @@ CommentBlock 0 0 "x\nz"
 -}
 multiLineComment :: Parser Comment
 multiLineComment = do
-    spaceBefore     <- whitespace
-    _               <- string "{-"                          -- <start>
+    spaceBefore     <- maybeSome whitespace
+    _               <- one (string "{-")                    -- <start>
     theComment      <- manyTill anyChar multiLineEnding     -- ... </end>
 
     -- Result
@@ -115,5 +115,5 @@ makeParser c =
         -- Remove trailing whitespace
         -- {!} if the leading-space count is zero
         -- >>> and then return
-        if indentation == 0 then whitespace >> return c
+        if indentation == 0 then maybeSome whitespace >> return c
         else return c

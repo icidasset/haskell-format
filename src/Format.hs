@@ -13,12 +13,12 @@ import qualified Format.Processor as Processor
 import qualified Text.Megaparsec as Mega (parseErrorPretty)
 
 
+-- 🍯
+
+
 data Result
     = Ok String
     | Err String
-
-
--- 🍯
 
 
 format :: String -> String -> Result
