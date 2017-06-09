@@ -58,5 +58,3 @@ bar = "bar"
 ### Exports & Imports
 
 Module exports will always be multiline and sorted by A-Z and then a-z. Imports will be sorted first by qualified or not qualified and then alphabetically.
-
-__TODO: Sorting__.
