@@ -54,6 +54,10 @@ portableSeparator =
     maybeSome whitespace `andThen` optional (char ',') `andThen` maybeSome whitespace
 
 
+
+-- Single `Portable`
+
+
 {-| A portable.
 
 >>> parseTest portable "Alias"
@@ -89,17 +93,13 @@ portable = do
 portableName :: Parser String
 portableName = choice
     [ string "module" `and` some spaceCharacter `and` one moduleName
-    , one infixPortableName
+    , string "(" `and` some (noneOf ")") `and` string ")"
     , one moduleName
     ]
 
 
-infixPortableName :: Parser String
-infixPortableName = do
-    opening         <- string "("
-    exceptTheEnd    <- someTill (noneOf ")") (char ')')
 
-    return $ concat [opening, exceptTheEnd, ")"]
+-- Data constructors
 
 
 {-| A list of data constructors.

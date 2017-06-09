@@ -24,7 +24,6 @@ buildList pieces =
 -- Reduce to a single entity
 
 
-
 reduce :: (Maybe Code, String) -> Code -> (Maybe Code, String)
 reduce (previousPiece, result) piece =
     [ --

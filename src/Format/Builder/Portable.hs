@@ -23,9 +23,6 @@ build (Portable name dataConstructors) = concat
 
       -- Data constructors
     , case dataConstructors of
-        [] ->
-            ""
-
-        list ->
-            "(" <> List.intercalate ", " list <> ")"
+        []      -> ""
+        list    -> "(" <> List.intercalate ", " list <> ")"
     ]

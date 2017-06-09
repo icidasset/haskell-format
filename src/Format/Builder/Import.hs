@@ -24,10 +24,12 @@ buildList list =
     in
         concat
             [ -- Non-qualified
+              --
               listNonQualified
                 |> List.map build
                 |> List.intercalate "\n"
 
+              --
               --
             , if length list > 2 && not (null listQualified) then
                 "\n\n"
@@ -35,6 +37,7 @@ buildList list =
                 ""
 
               -- Qualified
+              --
             , listQualified
                 |> List.map build
                 |> List.intercalate "\n"
@@ -67,7 +70,8 @@ build (Import name options portables) = concat
 
         list ->
             concat
-                [ " ("
+                [ " "
+                , "("
                 , list
                     |> List.map Portable.build
                     |> List.intercalate ", "

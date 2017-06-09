@@ -11,7 +11,7 @@ import qualified Data.List as List
 import qualified Data.List.Split as List (splitOn)
 
 
--- ⚗️ Combinators & stuff
+-- ⚗️ Combinators
 
 
 and :: (Applicative f, Monoid a) => f a -> f a -> f a
@@ -48,14 +48,14 @@ moduleName =
     some (alphaNumChar `or` char '.')
 
 
-whitespace :: Parser Char
-whitespace =
-    spaceChar
-
-
 spaceCharacter :: Parser Char
 spaceCharacter =
     char ' '
+
+
+whitespace :: Parser Char
+whitespace =
+    spaceChar
 
 
 

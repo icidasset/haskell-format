@@ -32,13 +32,13 @@ data Module = Module String (Maybe Comment) [Portable] deriving (Show)
 Module "Example" Nothing []
 
 >>> parseTest docModule "module Example (Type(..)) where"
-Module "Example" Nothing [Portable "Type" [".."]]
+Module "Example" Nothing [...]
 
 >>> parseTest docModule "module Example\n    (a\n    , b\n    ) where"
-Module "Example" Nothing [Portable "a" [],Portable "b" []]
+Module "Example" Nothing [...]
 
 >>> parseTest docModule (['{', '-', '-', '}'] ++ "\n module Example where")
-Module "Example" (Just (CommentBlock 0 0 "")) []
+Module "Example" (Just ...) []
 
 -}
 docModule :: Parser Module
