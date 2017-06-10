@@ -96,4 +96,5 @@ import qualified A
 ## To do
 
 - [ ] Whatever is in the checklist above (relating to formatting)
+- [ ] Parse language extensions
 - [ ] Add `--help` (`-h`) command and other flags (eg. version) to the cli
