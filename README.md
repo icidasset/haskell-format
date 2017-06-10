@@ -15,7 +15,8 @@ An opinionated Haskell source code parser and formatter.
 haskell-format path-to-haskell-file/Example.hs
 
 # Or use it with stdin
-haskell-format INPUT
+haskell-format
+INPUT
 ```
 
 
