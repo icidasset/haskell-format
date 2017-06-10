@@ -7,6 +7,7 @@ import Text.Megaparsec
 import Text.Megaparsec.String
 
 import qualified Control.Applicative
+import qualified Data.Char as Char
 import qualified Data.List as List
 import qualified Data.List.Split as List (splitOn)
 
@@ -77,6 +78,18 @@ leadingSpace str =
         |> List.length
 
 
-trim :: String -> String
-trim =
-    words .> unwords
+{-| Remove whitespace from the end of a string.
+
+>>> trimEnd "Hello   "
+"Hello"
+
+>>> trimEnd "Hi \n\n"
+"Hi"
+
+>>> trimEnd "Foo \nbar"
+"Foo \nbar"
+
+-}
+trimEnd :: String -> String
+trimEnd =
+    List.dropWhileEnd Char.isSpace

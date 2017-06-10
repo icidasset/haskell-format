@@ -1,6 +1,7 @@
 module Format.Parser.Code where
 
 import Format.Parser.Comment
+import Format.Parser.Utilities
 import Text.Megaparsec
 import Text.Megaparsec.String
 
@@ -33,4 +34,4 @@ unchartedLine :: Parser Code
 unchartedLine = do
     line <- manyTill anyChar eol
 
-    return $ UnchartedLine line
+    return $ UnchartedLine (trimEnd line)

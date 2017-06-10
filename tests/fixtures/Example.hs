@@ -24,3 +24,6 @@ hello :: String -> String
 hello name =
     -- Test
     "Hello " ++ name ++ "!"
+
+foo :: Bar
+foo = "bar"
