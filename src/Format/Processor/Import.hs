@@ -30,6 +30,22 @@ process imports =
         |> List.map processPortables
 
 
+{-| Compare imports.
+
+$setup
+>>> import Format.Parser.Import
+>>> let qualified = defaultOptions { qualified = True }
+
+>>> List.sortBy compareImports [Import "a" defaultOptions [], Import "A" defaultOptions []]
+[Import "A" ...,Import "a" ...]
+
+>>> List.sortBy compareImports [Import "B" defaultOptions [], Import "A" qualified []]
+[Import "B" ...,Import "A" ...]
+
+>>> List.sortBy compareImports [Import "B" qualified [], Import "A" qualified []]
+[Import "A" ...,Import "B" ...]
+
+-}
 compareImports :: Import -> Import -> Ordering
 compareImports (Import name_of_a opts_of_a _) (Import name_of_b opts_of_b _) =
     case compare (qualified opts_of_a) (qualified opts_of_b) of
