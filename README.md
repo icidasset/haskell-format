@@ -91,8 +91,7 @@ import qualified A
 
 
 
-## TODO
+## To do
 
 - [ ] Whatever is in the checklist above (relating to formatting)
-- [ ] Add an option to set the indentation (amount + type)
 - [ ] Add `--help` (`-h`) command and other flags (eg. version) to the cli
