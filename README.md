@@ -14,7 +14,8 @@ An opinionated Haskell source code parser and formatter.
 ```shell
 haskell-format path-to-haskell-file/Example.hs
 
-# --replace, -r             Will replace the file contents, prints to stdout by default
+# Or use it with stdin
+haskell-format INPUT
 ```
 
 
