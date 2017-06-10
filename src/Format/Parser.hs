@@ -21,7 +21,6 @@ Document
 A `Document` represents a single Haskell file.
 
 -}
-
 module Format.Parser
     ( Code(..)
     , Comment(..)
@@ -35,8 +34,8 @@ module Format.Parser
 
 import Format.Parser.Code
 import Format.Parser.Comment
-import Format.Parser.Module
 import Format.Parser.Import
+import Format.Parser.Module
 import Format.Parser.Portable
 import Format.Parser.Utilities
 import Text.Megaparsec (eof)

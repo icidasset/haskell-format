@@ -33,6 +33,8 @@ buildList list =
               --
             , if length list > 2 && not (null listQualified) then
                 "\n\n"
+              else if not (null listQualified) then
+                "\n"
               else
                 ""
 
@@ -92,5 +94,5 @@ isQualified (Import _ options _) = qualified options
 
 keywords :: ImportOptions -> String
 keywords (ImportOptions (Just anAlias) _ _) = " as " <> anAlias
-keywords (ImportOptions _ True _) = " hiding "
+keywords (ImportOptions _ True _) = " hiding"
 keywords _ = ""

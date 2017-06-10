@@ -12,7 +12,6 @@ Shift things around in a `Document`.
 Stuff like reordering the imports, etc.
 
 -}
-
 module Format.Processor where
 
 import Flow

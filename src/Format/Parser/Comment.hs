@@ -53,7 +53,8 @@ Comment 0 0 ""
 singleLineComment :: Parser Comment
 singleLineComment = do
     spaceBefore     <- maybeSome whitespace
-    _               <- one (string "-- ")                   -- <start>
+    _               <- one (string "--")                    -- <start>
+    _               <- maybeSome spaceCharacter
     theComment      <- manyTill anyChar singleLineEnding    -- ... </end>
 
     -- Result

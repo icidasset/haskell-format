@@ -42,8 +42,17 @@ reduce (previousPiece, result) piece =
       -- Code
       --
     , case piece of
+        Note (Comment _ 0 []) ->
+            "--"
+
         Note (Comment _ 0 comment) ->
             "-- " <> comment
+
+        Note (Comment newlines indentation []) ->
+            ""
+            <> List.replicate newlines '\n'
+            <> List.replicate indentation ' '
+            <> "--"
 
         Note (Comment newlines indentation comment) ->
             ""
