@@ -46,7 +46,7 @@ maybeSome =
 
 moduleName :: Parser String
 moduleName =
-    some (alphaNumChar `or` char '.')
+    some (alphaNumChar `or` char '.' `or` char '_')
 
 
 spaceCharacter :: Parser Char
