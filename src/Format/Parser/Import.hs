@@ -1,10 +1,11 @@
 module Format.Parser.Import where
 
 import Format.Parser.Portable
+import Format.Parser.Types
 import Format.Parser.Utilities
 import Prelude hiding (or)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 
 import qualified Data.Maybe as Maybe
 

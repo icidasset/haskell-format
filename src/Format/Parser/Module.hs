@@ -2,9 +2,10 @@ module Format.Parser.Module where
 
 import Format.Parser.Comment
 import Format.Parser.Portable
+import Format.Parser.Types
 import Format.Parser.Utilities
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 
 import qualified Data.Maybe as Maybe
 

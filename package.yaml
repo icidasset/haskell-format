@@ -13,9 +13,9 @@ ghc-options: -Wall
 
 dependencies:
   - base >= 4.7 && < 5
-  - flow
-  - megaparsec
-  - split
+  - flow >= 1.0.9
+  - megaparsec >= 6.2 && < 7
+  - split == 0.2.3.*
 
 
 library:

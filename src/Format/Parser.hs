@@ -37,9 +37,9 @@ import Format.Parser.Comment
 import Format.Parser.Import
 import Format.Parser.Module
 import Format.Parser.Portable
+import Format.Parser.Types
 import Format.Parser.Utilities
 import Text.Megaparsec (eof)
-import Text.Megaparsec.String
 
 
 -- 🌳

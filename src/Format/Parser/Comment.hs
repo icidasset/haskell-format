@@ -1,10 +1,11 @@
 module Format.Parser.Comment where
 
 import Flow
+import Format.Parser.Types
 import Format.Parser.Utilities
 import Prelude hiding (or)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 
 
 -- 🌳

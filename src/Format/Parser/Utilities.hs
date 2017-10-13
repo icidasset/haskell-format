@@ -2,9 +2,10 @@ module Format.Parser.Utilities where
 
 import Control.Applicative (Alternative, (<|>))
 import Flow
+import Format.Parser.Types
 import Prelude hiding (or)
 import Text.Megaparsec
-import Text.Megaparsec.String
+import Text.Megaparsec.Char
 
 import qualified Control.Applicative
 import qualified Data.Char as Char
