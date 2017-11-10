@@ -8,7 +8,18 @@ github: icidasset/haskell-format
 category: Development
 
 
-ghc-options: -Wall
+default-extensions:
+  DisambiguateRecordFields
+  DuplicateRecordFields
+  OverloadedStrings
+
+
+ghc-options:
+  -Wall
+  -Wcompat
+  -Wincomplete-record-updates
+  -Wincomplete-uni-patterns
+  -Wredundant-constraints
 
 
 dependencies:
@@ -30,6 +41,7 @@ executables:
     source-dirs: bin
     dependencies:
       - haskell-format
+
 
 tests:
   spec:

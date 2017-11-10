@@ -68,7 +68,12 @@ build (Import name options portables) = concat
       -- Portables
     , case portables of
         [] ->
-            ""
+            case options of
+                ImportOptions _ True _ _ ->
+                    " ()"
+
+                _ ->
+                    ""
 
         list ->
             concat
@@ -93,6 +98,6 @@ isQualified (Import _ options _) = qualified options
 
 
 keywords :: ImportOptions -> String
-keywords (ImportOptions (Just anAlias) _ _) = " as " <> anAlias
-keywords (ImportOptions _ True _) = " hiding"
+keywords (ImportOptions (Just anAlias) _ _ _) = " as " <> anAlias
+keywords (ImportOptions _ _ True _) = " hiding"
 keywords _ = ""

@@ -1,4 +1,8 @@
-module Example (x, y, z) where
+module Example
+    ( x
+    , y
+    , z
+    ) where
 
 import Stuff
 
@@ -25,5 +29,7 @@ hello name =
     -- Test
     "Hello " ++ name ++ "!"
 
+
 foo :: Bar
 foo = "bar"
+    |> String.toLower

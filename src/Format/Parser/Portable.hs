@@ -39,6 +39,9 @@ data Portable =
 >>> parseTest portables "( a , b )"
 [Portable "a" [],Portable "b" []]
 
+>>> parseTest portables "()"
+[]
+
 -}
 portables :: Parser [Portable]
 portables = do
@@ -94,7 +97,7 @@ portable = do
 portableName :: Parser String
 portableName = choice
     [ string "module" `and` some spaceCharacter `and` one moduleName
-    , string "(" `and` some (noneOf ")") `and` string ")"
+    , string "(" `and` some (notChar ')') `and` string ")"
     , one moduleName
     ]
 

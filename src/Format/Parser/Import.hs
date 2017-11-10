@@ -4,7 +4,7 @@ import Format.Parser.Portable
 import Format.Parser.Types
 import Format.Parser.Utilities
 import Prelude hiding (or)
-import Text.Megaparsec
+import Text.Megaparsec hiding (empty)
 import Text.Megaparsec.Char
 
 import qualified Data.Maybe as Maybe
@@ -28,6 +28,7 @@ data Import = Import String ImportOptions [Portable] deriving (Show)
 data ImportOptions =
     ImportOptions
         { alias :: Maybe String
+        , empty :: Bool
         , hiding :: Bool
         , qualified :: Bool
         }
@@ -38,6 +39,7 @@ defaultOptions :: ImportOptions
 defaultOptions =
     ImportOptions
         { alias = Nothing
+        , empty = False
         , hiding = False
         , qualified = False
         }
@@ -50,22 +52,28 @@ defaultOptions =
 {-| Parse the `imports` of a document.
 
 >>> parseTest docImport "import A"
-Import "A" (ImportOptions {alias = Nothing, hiding = False, qualified = False}) []
+Import "A" (ImportOptions {alias = Nothing, empty = False, hiding = False, qualified = False}) []
+
+>>> parseTest docImport "import A ()"
+Import "A" (ImportOptions {alias = Nothing, empty = True, hiding = False, qualified = False}) []
 
 >>> parseTest docImport "import A (c, d)"
 Import "A" ... [Portable "c" [],Portable "d" []]
 
 >>> parseTest docImport "import qualified B"
-Import "B" (ImportOptions {alias = Nothing, hiding = False, qualified = True}) []
+Import "B" (ImportOptions {alias = Nothing, empty = False, hiding = False, qualified = True}) []
 
 >>> parseTest docImport "import qualified B (C(D))"
 Import "B" ... [Portable "C" ["D"]]
 
 >>> parseTest docImport "import A.B.C hiding ()"
-Import "A.B.C" (ImportOptions {alias = Nothing, hiding = True, qualified = False}) []
+Import "A.B.C" (ImportOptions {alias = Nothing, empty = True, hiding = True, qualified = False}) []
+
+>>> parseTest docImport "import A.B.C hiding (d)"
+Import "A.B.C" (ImportOptions {alias = Nothing, empty = False, hiding = True, qualified = False}) [Portable "d" []]
 
 >>> parseTest docImport "import A as B"
-Import "A" (ImportOptions {alias = Just "B", hiding = False, qualified = False}) []
+Import "A" (ImportOptions {alias = Just "B", empty = False, hiding = False, qualified = False}) []
 
 -}
 docImport :: Parser Import
@@ -82,10 +90,19 @@ docImport = do
     _               <- maybeSome whitespace
 
     return $
-        Import
-            importName
-            (theOptions { qualified = Maybe.isJust isQualified })
-            (Maybe.fromMaybe [] dependencies)
+        let
+            isEmpty =
+                case dependencies of
+                    Just [] ->
+                        True
+
+                    _ ->
+                        False
+        in
+            Import
+                importName
+                (theOptions { empty = isEmpty, qualified = Maybe.isJust isQualified })
+                (Maybe.fromMaybe [] dependencies)
 
 
 
