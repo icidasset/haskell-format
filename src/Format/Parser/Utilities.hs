@@ -45,6 +45,11 @@ maybeSome =
 -- 🤖 Predefined combinations
 
 
+derivation :: Parser String
+derivation =
+    some (alphaNumChar `or` char '(' `or` char ')')
+
+
 moduleName :: Parser String
 moduleName =
     some (alphaNumChar `or` char '.' `or` char '_')
