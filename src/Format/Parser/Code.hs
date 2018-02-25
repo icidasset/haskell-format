@@ -18,8 +18,10 @@ data Code
     | TypeAlias String String
     --
     -- Level 1
-    | Definition String
-    | Specification String String
+    --
+    -- 1st argument = The leading spaces on the same line
+    | Definition Int String
+    | Specification Int String String
     --
     -- Uncharted territory
     -- > ie. an unparsed line of code
@@ -71,32 +73,39 @@ typeAlias = do
 {-| A specification.
 
 >>> parseTest specification "specification :: (a -> b) -> Parser Code\n"
-Specification "specification" "(a -> b) -> Parser Code"
+Specification 0 "specification" "(a -> b) -> Parser Code"
+
+>>> parseTest specification "    spec :: c\n"
+Specification 4 "spec" "c"
 
 -}
 specification :: Parser Code
 specification = do
-    _               <- maybeSome whitespace
+    spaceBefore     <- maybeSome whitespace
     functionName    <- some alphaNumChar
     _               <- one (string " :: ")
     functionType    <- someTill anyChar eol
 
-    return $ Specification functionName functionType
+    return $ Specification (leadingSpace spaceBefore) functionName functionType
 
 
 {-| A definition.
 
 >>> parseTest definition "definition = do"
-Definition "definition"
+Definition 0 "definition"
+
+>>> parseTest definition "  def = "
+Definition 2 "def"
 
 -}
 definition :: Parser Code
 definition = do
-    _               <- maybeSome whitespace
+    spaceBefore     <- maybeSome whitespace
     functionName    <- some alphaNumChar
-    _               <- one (string " = ")
+    _               <- optional spaceCharacter
+    _               <- one (char '=')
 
-    return $ Definition functionName
+    return $ Definition (leadingSpace spaceBefore) functionName
 
 
 
