@@ -73,6 +73,7 @@ prefix (Note (Comment _ 0 _)) _ = "\n\n"
 {- Insert two empty lines before certain code -}
 prefix (Note (CommentBlock _ _ _)) (Specification _ _ _) = ""
 prefix _ (Specification 0 _ _) = "\n\n"
+prefix _ (TypeAlias _ _) = "\n\n"
 
 {- No prefix otherwise -}
 prefix _ _ = ""
@@ -114,6 +115,18 @@ render (Note (CommentBlock newlines indentation comment)) =
     <> List.replicate newlines '\n'
     <> List.replicate indentation ' '
     <> "{-" <> comment <> "-}"
+
+
+
+-- CODE : Types
+
+
+render (TypeAlias name theAlias) =
+    ""
+    <> "type "
+    <> name
+    <> " = "
+    <> theAlias
 
 
 

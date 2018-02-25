@@ -18,8 +18,7 @@ data Code
     | TypeAlias String String
     --
     -- Level 1
-    --
-    -- 1st argument = The leading spaces on the same line
+    -- # 1st argument = The leading spaces on the same line
     | Definition Int String
     | Specification Int String String
     --
@@ -37,6 +36,11 @@ code :: Parser Code
 code =
     choice
         [ try (fmap Note comment)
+
+        -- Types
+        , try typeAlias
+
+        -- Level 1
         , try specification
         , try definition
 
@@ -60,7 +64,9 @@ typeAlias = do
     _               <- maybeSome whitespace
     _               <- one (string "type ")
     name            <- some alphaNumChar
-    _               <- one (string " = ")
+    _               <- optional spaceCharacter
+    _               <- one (char '=')
+    _               <- optional spaceCharacter
     for             <- someTill anyChar eol
 
     return $ TypeAlias name for
@@ -83,7 +89,9 @@ specification :: Parser Code
 specification = do
     spaceBefore     <- maybeSome whitespace
     functionName    <- some alphaNumChar
-    _               <- one (string " :: ")
+    _               <- optional spaceCharacter
+    _               <- one (string "::")
+    _               <- optional spaceCharacter
     functionType    <- someTill anyChar eol
 
     return $ Specification (leadingSpace spaceBefore) functionName functionType
