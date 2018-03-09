@@ -4,6 +4,7 @@ import Data.Monoid ((<>))
 import Flow
 import Format.Parser
 
+import qualified Data.Char as Char
 import qualified Data.List as List
 import qualified Data.Tuple as Tuple
 
@@ -75,8 +76,29 @@ prefix (Note (CommentBlock _ _ _)) (Specification _ _ _) = ""
 prefix _ (Specification 0 _ _) = "\n\n"
 prefix _ (TypeAlias _ _) = "\n\n"
 
+{- Insert one empty line before `Specification`s and `Definition`s in a `let` block -}
+prefix (UnchartedLine prevLine) (Specification indentation _ _) =
+    if isStartOfLetBlock prevLine || indentation == 0 then
+        ""
+    else
+        "\n"
+
+prefix (UnchartedLine prevLine) (Definition indentation _) =
+    if isStartOfLetBlock prevLine || indentation == 0 then
+        ""
+    else
+        "\n"
+
 {- No prefix otherwise -}
 prefix _ _ = ""
+
+
+{- Check if a (uncharted) line is the start of a `let` block -}
+isStartOfLetBlock :: String -> Bool
+isStartOfLetBlock line =
+    line
+        |> List.dropWhile Char.isSpace
+        |> List.isPrefixOf "let"
 
 
 
