@@ -3,7 +3,7 @@ module Format.Parser.Code where
 import Format.Parser.Comment
 import Format.Parser.Types
 import Format.Parser.Utilities
-import Prelude hiding (or)
+import Prelude hiding (and, or)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
@@ -13,10 +13,15 @@ import Text.Megaparsec.Char
 
 data Code
     = Note Comment
+    | QuasiQuote Int String String
+    --
+    -- Types
+    | TypeAlias String String
     --
     -- Level 1
-    | Definition String
-    | Specification String String
+    -- # 1st argument = The leading spaces on the same line
+    | Definition Int String
+    | Specification Int String String
     --
     -- Uncharted territory
     -- > ie. an unparsed line of code
@@ -32,6 +37,12 @@ code :: Parser Code
 code =
     choice
         [ try (fmap Note comment)
+        , try quasiQuote
+
+        -- Types
+        , try typeAlias
+
+        -- Level 1
         , try specification
         , try definition
 
@@ -40,39 +51,98 @@ code =
         ]
 
 
+{-| A Quasiquotation.
+
+>>> parseTest quasiQuote "[expr|abc|]"
+QuasiQuote 0 "expr" "abc"
+
+>>> parseTest quasiQuote "    [expr|\nabc\n|]"
+QuasiQuote 4 "expr" "\nabc\n"
+
+>>> parseTest quasiQuote "[expr|abc\ndef|]"
+QuasiQuote 0 "expr" "abc\ndef"
+
+>>> parseTest quasiQuote "  [expr|abc\ndef\n|]"
+QuasiQuote 2 "expr" "abc\ndef\n"
+
+-}
+quasiQuote :: Parser Code
+quasiQuote = do
+    spaceBefore     <- maybeSome whitespace
+    _               <- one (char '[')
+    expression      <- some alphaNumChar
+    _               <- one (char '|')
+    quote           <- someTill anyChar (string "|]")
+    _               <- optional eol
+
+    return $ QuasiQuote (leadingSpace spaceBefore) expression quote
+
+
+
+-- Types
+
+
+{-| A type alias.
+
+>>> parseTest typeAlias "type Alias = (a -> b) -> Original\n"
+TypeAlias "Alias" "(a -> b) -> Original"
+
+-}
+typeAlias :: Parser Code
+typeAlias = do
+    _               <- maybeSome whitespace
+    _               <- one (string "type ")
+    name            <- some alphaNumChar
+    _               <- optional spaceCharacter
+    _               <- one (char '=')
+    _               <- optional spaceCharacter
+    for             <- someTill anyChar eol
+
+    return $ TypeAlias name for
+
+
 
 -- Level 1
 
 
 {-| A specification.
 
->>> parseTest specification "specification :: Parser (a -> b) -> Code\n"
-Specification "specification" "Parser (a -> b) -> Code"
+>>> parseTest specification "specification :: (a -> b) -> Parser Code\n"
+Specification 0 "specification" "(a -> b) -> Parser Code"
+
+>>> parseTest specification "    spec :: c\n"
+Specification 4 "spec" "c"
 
 -}
 specification :: Parser Code
 specification = do
-    _               <- maybeSome whitespace
+    spaceBefore     <- maybeSome whitespace
     functionName    <- some alphaNumChar
-    _               <- one (string " :: ")
+    _               <- optional spaceCharacter
+    _               <- one (string "::")
+    _               <- optional spaceCharacter
     functionType    <- someTill anyChar eol
 
-    return $ Specification functionName functionType
+    return $ Specification (leadingSpace spaceBefore) functionName functionType
 
 
 {-| A definition.
 
 >>> parseTest definition "definition = do"
-Definition "definition"
+Definition 0 "definition"
+
+>>> parseTest definition "  def = "
+Definition 2 "def"
 
 -}
 definition :: Parser Code
 definition = do
-    _               <- maybeSome whitespace
+    spaceBefore     <- maybeSome whitespace
     functionName    <- some alphaNumChar
-    _               <- one (string " = ")
+    _               <- optional spaceCharacter
+    _               <- one (char '=')
 
-    return $ Definition functionName
+    return $ Definition (leadingSpace spaceBefore) functionName
 
 
 
