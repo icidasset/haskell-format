@@ -64,8 +64,8 @@ prefix :: Code -> Code -> String
 {- Insert whitespace before a top-level `--` comment.
    If it is the first one that is.
 -}
-prefix (UnchartedLine _) (Note (Comment _ 0 _)) = "\n\n\n"
-prefix (Specification _ _ _) (Note (Comment _ 0 _)) = "\n\n\n"
+prefix (Note _) (Note (Comment _ 0 _)) = ""
+prefix _ (Note (Comment _ 0 _)) = "\n\n\n"
 
 {- Insert whitespace after a top-level `--` comment -}
 prefix (Note (Comment _ 0 _)) (Note Comment{}) = ""
@@ -140,6 +140,20 @@ render (Note (CommentBlock newlines indentation comment)) =
 
 
 
+-- CODE : Quasiquotations
+
+
+render (QuasiQuote indentation expression quote) =
+    ""
+    <> List.replicate indentation ' '
+    <> "["
+    <> expression
+    <> "|"
+    <> quote
+    <> "|]"
+
+
+
 -- CODE : Types
 
 
@@ -186,7 +200,7 @@ render (UnchartedLine line) =
 
 suffix :: Code -> String
 
-{- No suffix for Definitions -}
+{- No suffix for certain constructs -}
 suffix (Definition _ _) = ""
 
 {- Default suffix otherwise -}

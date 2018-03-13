@@ -13,6 +13,7 @@ import Text.Megaparsec.Char
 
 data Code
     = Note Comment
+    | QuasiQuote Int String String
     --
     -- Types
     | TypeAlias String String
@@ -36,6 +37,7 @@ code :: Parser Code
 code =
     choice
         [ try (fmap Note comment)
+        , try quasiQuote
 
         -- Types
         , try typeAlias
@@ -47,6 +49,33 @@ code =
         -- Fallback
         , unchartedLine
         ]
+
+
+{-| A Quasiquotation.
+
+>>> parseTest quasiQuote "[expr|abc|]"
+QuasiQuote 0 "expr" "abc"
+
+>>> parseTest quasiQuote "    [expr|\nabc\n|]"
+QuasiQuote 4 "expr" "\nabc\n"
+
+>>> parseTest quasiQuote "[expr|abc\ndef|]"
+QuasiQuote 0 "expr" "abc\ndef"
+
+>>> parseTest quasiQuote "  [expr|abc\ndef\n|]"
+QuasiQuote 2 "expr" "abc\ndef\n"
+
+-}
+quasiQuote :: Parser Code
+quasiQuote = do
+    spaceBefore     <- maybeSome whitespace
+    _               <- one (char '[')
+    expression      <- some alphaNumChar
+    _               <- one (char '|')
+    quote           <- someTill anyChar (string "|]")
+    _               <- optional eol
+
+    return $ QuasiQuote (leadingSpace spaceBefore) expression quote
 
 
 
