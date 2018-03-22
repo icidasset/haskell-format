@@ -4,6 +4,7 @@ import Data.Monoid ((<>))
 import Flow
 import Format.Parser
 
+import qualified Data.Char as Char
 import qualified Data.List as List
 import qualified Data.Tuple as Tuple
 
@@ -63,19 +64,41 @@ prefix :: Code -> Code -> String
 {- Insert whitespace before a top-level `--` comment.
    If it is the first one that is.
 -}
-prefix (UnchartedLine _) (Note (Comment _ 0 _)) = "\n\n\n"
-prefix (Specification _ _) (Note (Comment _ 0 _)) = "\n\n\n"
+prefix (Note _) (Note (Comment _ 0 _)) = ""
+prefix _ (Note (Comment _ 0 _)) = "\n\n\n"
 
 {- Insert whitespace after a top-level `--` comment -}
 prefix (Note (Comment _ 0 _)) (Note Comment{}) = ""
 prefix (Note (Comment _ 0 _)) _ = "\n\n"
 
 {- Insert two empty lines before certain code -}
-prefix (Note (CommentBlock _ _ _)) (Specification _ _) = ""
-prefix _ (Specification _ _) = "\n\n"
+prefix (Note (CommentBlock _ _ _)) (Specification _ _ _) = ""
+prefix _ (Specification 0 _ _) = "\n\n"
+prefix _ (TypeAlias _ _) = "\n\n"
+
+{- Insert one empty line before `Specification`s and `Definition`s in a `let` block -}
+prefix (UnchartedLine prevLine) (Specification indentation _ _) =
+    if isStartOfLetBlock prevLine || indentation == 0 then
+        ""
+    else
+        "\n"
+
+prefix (UnchartedLine prevLine) (Definition indentation _) =
+    if isStartOfLetBlock prevLine || indentation == 0 then
+        ""
+    else
+        "\n"
 
 {- No prefix otherwise -}
 prefix _ _ = ""
+
+
+{- Check if a (uncharted) line is the start of a `let` block -}
+isStartOfLetBlock :: String -> Bool
+isStartOfLetBlock line =
+    line
+        |> List.dropWhile Char.isSpace
+        |> List.isPrefixOf "let"
 
 
 
@@ -117,15 +140,48 @@ render (Note (CommentBlock newlines indentation comment)) =
 
 
 
+-- CODE : Quasiquotations
+
+
+render (QuasiQuote indentation expression quote) =
+    ""
+    <> List.replicate indentation ' '
+    <> "["
+    <> expression
+    <> "|"
+    <> quote
+    <> "|]"
+
+
+
+-- CODE : Types
+
+
+render (TypeAlias name theAlias) =
+    ""
+    <> "type "
+    <> name
+    <> " = "
+    <> theAlias
+
+
+
 -- CODE : Level 1
 
 
-render (Specification name typ) =
-    name <> " :: " <> typ
+render (Specification indentation name typ) =
+    ""
+    <> List.replicate indentation ' '
+    <> name
+    <> " :: "
+    <> typ
 
 
-render (Definition name) =
-    name <> " = "
+render (Definition indentation name) =
+    ""
+    <> List.replicate indentation ' '
+    <> name
+    <> " ="
 
 
 
@@ -144,8 +200,8 @@ render (UnchartedLine line) =
 
 suffix :: Code -> String
 
-{- No suffix for Definitions -}
-suffix (Definition _) = ""
+{- No suffix for certain constructs -}
+suffix (Definition _ _) = ""
 
 {- Default suffix otherwise -}
 suffix _ = "\n"
