@@ -11,7 +11,7 @@ import qualified Format.Builder.Portable as Portable
 -- 📮
 
 
-{-| Build an `Import` list
+{-| Build an `Import` list.
 -}
 buildList :: [Import] -> String
 buildList list =

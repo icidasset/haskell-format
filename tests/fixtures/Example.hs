@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables, LiberalTypeSynonyms #-}
+{-# LANGUAGE MultiWayIf #-}
 module Example
     ( x
     , y

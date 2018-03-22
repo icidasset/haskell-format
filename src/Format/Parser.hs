@@ -27,6 +27,7 @@ module Format.Parser
     , Document(..)
     , Import(..)
     , ImportOptions(..)
+    , Language(..)
     , Module(..)
     , Portable(..)
     , document
@@ -35,6 +36,7 @@ module Format.Parser
 import Format.Parser.Code
 import Format.Parser.Comment
 import Format.Parser.Import
+import Format.Parser.Language
 import Format.Parser.Module
 import Format.Parser.Portable
 import Format.Parser.Types
@@ -45,7 +47,7 @@ import Text.Megaparsec (eof)
 -- 🌳
 
 
-data Document = Document Module [Import] [Code] deriving (Show)
+data Document = Document [Language] Module [Import] [Code] deriving (Show)
 
 
 
@@ -54,10 +56,13 @@ data Document = Document Module [Import] [Code] deriving (Show)
 
 document :: Parser Document
 document = do
+    _                   <- maybeSome whitespace
+    languagePragmas     <- maybeSome language
+    _                   <- maybeSome whitespace
     theModule           <- one docModule
     _                   <- maybeSome comment
     theImports          <- maybeSome docImport
     piecesOfCode        <- maybeSome code
     _                   <- eof
 
-    return $ Document theModule theImports piecesOfCode
+    return $ Document languagePragmas theModule theImports piecesOfCode

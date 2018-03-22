@@ -36,12 +36,12 @@ run doc =
 
 
 mapModule :: (Module -> Module) -> Document -> Document
-mapModule mapFn (Document m i c) = Document (mapFn m) i c
+mapModule mapFn (Document l m i c) = Document l (mapFn m) i c
 
 
 mapImports :: ([Import] -> [Import]) -> Document -> Document
-mapImports mapFn (Document m i c) = Document m (mapFn i) c
+mapImports mapFn (Document l m i c) = Document l m (mapFn i) c
 
 
 mapCode :: ([Code] -> [Code]) -> Document -> Document
-mapCode mapFn (Document m i c) = Document m i (mapFn c)
+mapCode mapFn (Document l m i c) = Document l m i (mapFn c)
